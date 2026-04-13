@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RepRise</title>
+
+<style>
+body {
+  margin:0;
+  font-family:Arial;
+  background:#0d1d14;
+  color:white;
+}
+
+.container {
+  max-width:1000px;
+  margin:auto;
+  padding:20px;
+}
+
+h1 {margin-bottom:10px;}
+
+select, input, button {
+  padding:8px;
+  margin:4px;
+  border-radius:8px;
+  border:none;
+}
+
+button {
+  background:#7ee081;
+  font-weight:bold;
+}
+
+.card {
+  background:#1a3a25;
+  padding:12px;
+  margin:10px 0;
+  border-radius:10px;
+}
+
+.result {
+  margin-top:6px;
+}
+
+.up {color:#7ee081;}
+.build {color:#ffd966;}
+.hold {color:#ff9999;}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h1>RepRise</h1>
+
+<select id="day"></select>
+<button onclick="render()">Load Workout</button>
+<button onclick="nextWeek()">Next Week</button>
+
+<div id="workout"></div>
+
+<h3>Session Summary</h3>
+<button onclick="summary()">Show Summary</button>
+<div id="summary"></div>
+
+</div>
+
+<script>
+
+const workouts = [
+["Squat","Press","Row","Lunge","RDL"],
+["Goblet Squat","Press","Row","Split Squat","Core"],
+["Squat","Push","Row","Lunge","Carry"],
+["Goblet Squat","Press","Row","Step Up","Core"]
+];
+
+let week = 1;
+let data = JSON.parse(localStorage.getItem("reprrise")) || {};
+
+function populate(){
+  const sel = document.getElementById("day");
+  workouts.forEach((d,i)=>{
+    const o=document.createElement("option");
+    o.value=i;
+    o.textContent="Day "+(i+1);
+    sel.appendChild(o);
+  });
+}
+
+function key(ex){
+  return "w"+week+"-"+ex;
+}
+
+function evaluate(w,r){
+  if(r.every(x=>x>=12)) return ["Increase to "+(w+2.5)+"kg","up"];
+  if(r.every(x=>x>=8)) return ["Keep building","build"];
+  return ["Stay weight","hold"];
+}
+
+function render(){
+  const d=document.getElementById("day").value;
+  let html="";
+  
+  workouts[d].forEach(ex=>{
+    const last=data[key(ex)] || {};
+    
+    html+=`
+    <div class="card">
+    <b>${ex}</b><br>
+    <input placeholder="kg" value="${last.w||""}">
+    <input placeholder="r1" value="${last.r1||""}">
+    <input placeholder="r2" value="${last.r2||""}">
+    <input placeholder="r3" value="${last.r3||""}">
+    <button onclick="check(this,'${ex}')">Check</button>
+    <div class="result"></div>
+    </div>`;
+  });
+
+  document.getElementById("workout").innerHTML=html;
+}
+
+function check(btn,ex){
+  const div=btn.parentElement;
+  const inputs=div.querySelectorAll("input");
+
+  const w=Number(inputs[0].value||0);
+  const r=[inputs[1].value,inputs[2].value,inputs[3].value].map(Number);
+
+  const [msg,cls]=evaluate(w,r);
+
+  div.querySelector(".result").innerHTML=`<span class="${cls}">${msg}</span>`;
+
+  data[key(ex)]={w,...Object.fromEntries(["r1","r2","r3"].map((k,i)=>[k,r[i]]))};
+
+  localStorage.setItem("reprrise",JSON.stringify(data));
+}
+
+function summary(){
+  let up=[],build=[],hold=[];
+  
+  Object.keys(data).forEach(k=>{
+    const entry=data[k];
+    const r=[entry.r1,entry.r2,entry.r3];
+    const [_,cls]=evaluate(entry.w,r);
+    if(cls==="up") up.push(k);
+    else if(cls==="hold") hold.push(k);
+    else build.push(k);
+  });
+
+  document.getElementById("summary").innerHTML=
+  `Increase: ${up.length}<br>
+   Build: ${build.length}<br>
+   Hold: ${hold.length}`;
+}
+
+function nextWeek(){
+  week = week<6 ? week+1 : 1;
+  alert("Week "+week);
+}
+
+populate();
+render();
+
+</script>
+
+</body>
+</html>
