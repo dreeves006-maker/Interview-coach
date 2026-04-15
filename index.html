@@ -1,553 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <meta name="theme-color" content="#0f172a" />
-  <title>Interview Coach Mobile Premium</title>
-  <style>
-    :root{
-      --bg1:#f8fafc; --bg2:#eef2ff; --card:#ffffff; --ink:#0f172a; --muted:#64748b;
-      --line:#e2e8f0; --soft:#f1f5f9; --accent:#0f172a; --accent2:#1e293b;
-      --green:#166534; --greenbg:#ecfdf5; --greenline:#bbf7d0; --red:#991b1b; --redbg:#fef2f2;
-      --shadow:0 10px 30px rgba(15,23,42,.08); --radius:22px;
-    }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--ink)}
-    .wrap{width:min(100%,760px);margin:0 auto;padding:16px 14px 28px}
-    .hero,.card{background:var(--card);border:1px solid rgba(226,232,240,.85);border-radius:var(--radius);box-shadow:var(--shadow)}
-    .hero{padding:18px;margin-bottom:14px;background:linear-gradient(135deg,#0f172a 0%, #1e293b 100%);color:#fff}
-    .hero h1{margin:0 0 6px;font-size:28px;line-height:1.05;letter-spacing:-.02em}
-    .hero p{margin:0;color:#dbeafe;font-size:14px;line-height:1.45}
-    .stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px}
-    .stat{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:12px}
-    .stat .label{font-size:12px;color:#cbd5e1}
-    .stat .value{font-size:22px;font-weight:800;margin-top:4px}
-    .card{padding:16px;margin-bottom:14px}
-    .row{display:flex;gap:10px;flex-wrap:wrap}
-    .grid2{display:grid;gap:10px;grid-template-columns:1fr 1fr}
-    .grid3{display:grid;gap:10px;grid-template-columns:1fr 1fr 1fr}
-    @media (max-width:600px){.grid2,.grid3,.stats{grid-template-columns:1fr}}
-    .label{display:block;font-size:13px;color:var(--muted);font-weight:700;margin-bottom:8px}
-    select, textarea, button{font:inherit}
-    select, textarea{width:100%;border:1px solid var(--line);border-radius:18px;padding:14px;background:#fff;color:var(--ink);outline:none}
-    select:focus, textarea:focus{border-color:#94a3b8;box-shadow:0 0 0 4px rgba(148,163,184,.14)}
-    textarea{min-height:200px;resize:vertical;line-height:1.45}
-    button{border:none;padding:13px 16px;border-radius:16px;cursor:pointer;font-weight:800;min-height:48px}
-    .btn-primary{background:var(--accent);color:#fff;flex:1 1 150px}
-    .btn-secondary{background:#fff;border:1px solid var(--line);color:var(--ink);flex:1 1 130px}
-    .btn-chip{background:#fff;border:1px solid var(--line);color:var(--ink);flex:1 1 140px}
-    .btn-chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-    .btn-voice{background:#e2e8f0;color:#0f172a;flex:1 1 160px}
-    .btn-voice.recording{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
-    .question{background:var(--soft);border-radius:20px;padding:16px;font-size:20px;font-weight:800;line-height:1.3;margin-bottom:12px}
-    .tip,.panel,.guideItem,.historyItem,.reminderItem,.voicePanel,.sample,.tryagain{background:var(--soft);border-radius:18px;padding:14px}
-    .tip{border:1px dashed #cbd5e1}
-    .tip strong,.panel h3,.sample strong,.voicePanel strong{display:block;margin-bottom:6px}
-    .pill{display:inline-block;padding:8px 12px;border-radius:999px;background:var(--soft);font-size:12px;font-weight:800;color:var(--accent2)}
-    .badge{white-space:nowrap;background:#e2e8f0;border-radius:999px;padding:7px 10px;font-weight:800;font-size:12px}
-    .scoreBox{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px}
-    .bigScore{font-size:40px;font-weight:900;letter-spacing:-.03em;line-height:1}
-    .tone{font-size:13px;color:var(--muted);margin-top:4px;font-weight:700}
-    .coach{margin-top:10px;background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;border-radius:18px;padding:14px}
-    .coach strong{display:block;margin-bottom:6px}
-    .meterLabel{display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:6px}
-    .meter{height:12px;background:#e2e8f0;border-radius:999px;overflow:hidden}
-    .meter > span{display:block;height:100%;background:linear-gradient(90deg,#64748b,#0f172a);border-radius:999px}
-    .small{font-size:13px}.muted{color:var(--muted)}
-    .tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:10px 0 14px}
-    .tab{background:#fff;border:1px solid var(--line);border-radius:14px;padding:11px 10px;font-weight:800;text-align:center;cursor:pointer}
-    .tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-    .tabpanel{display:none}.tabpanel.active{display:block}
-    .greenbox{background:var(--greenbg);border:1px solid var(--greenline);border-radius:18px;padding:14px}
-    .ok{color:var(--green)} .danger{color:var(--red)}
-    .foot{text-align:center;color:var(--muted);font-size:12px;padding:8px 0 20px}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Fit Tracker</title>
+
+<style>
+body {
+  font-family: Arial;
+  margin: 0;
+  background: #0f172a;
+  color: white;
+}
+
+header {
+  background: #22c55e;
+  padding: 15px;
+  text-align: center;
+  font-size: 22px;
+}
+
+.container {
+  padding: 15px;
+}
+
+.day {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #1e293b;
+  border-radius: 10px;
+}
+
+.exercise {
+  margin: 10px 0;
+  padding: 10px;
+  background: #334155;
+  border-radius: 8px;
+}
+</style>
 </head>
+
 <body>
-  <div class="wrap">
-    <section class="hero">
-      <h1>Interview Coach</h1>
-      <p>Voice practice, coaching feedback, sample answers, and a try-again loop for entry-level interviews.</p>
-      <div class="stats">
-        <div class="stat"><div class="label">Completed</div><div class="value" id="completedCount">0</div></div>
-        <div class="stat"><div class="label">Average</div><div class="value" id="avgScore">-</div></div>
-        <div class="stat"><div class="label">Attempt</div><div class="value" id="attemptStat">1</div></div>
-      </div>
-    </section>
 
-    <section class="card">
-      <div class="label">Practice setup</div>
-      <select id="trackSelect">
-        <option value="firstJob" selected>First job / early career</option>
-        <option value="general">General interview</option>
-        <option value="competency">Competency questions</option>
-      </select>
-      <div class="row" style="margin-top:10px">
-        <button class="btn-chip active" id="typedBtn">Type mode</button>
-        <button class="btn-chip" id="spokenBtn">Speak first</button>
-      </div>
-    </section>
+<header>💪 My Fit Tracker</header>
 
-    <section class="card">
-      <div class="scoreBox">
-        <div><span class="pill" id="trackPill">Early Career</span></div>
-        <div class="small muted" id="questionCounter">Question 1 of 5</div>
-      </div>
-
-      <div class="question" id="questionText"></div>
-
-      <div class="tip">
-        <strong>Quick coaching tip</strong>
-        <div class="small" id="tipText"></div>
-      </div>
-
-      <div class="voicePanel">
-        <strong>Voice mode</strong>
-        <div class="small muted">Tap start, answer out loud, then score the transcript.</div>
-        <div class="small" id="voiceSupported" style="margin-top:6px;"></div>
-      </div>
-
-      <label class="label" for="answerInput" id="answerLabel">Type the answer</label>
-      <textarea id="answerInput" placeholder="Write your answer here..."></textarea>
-
-      <div class="row" style="margin-top:12px">
-        <button class="btn-voice" id="voiceBtn">Start voice mode</button>
-        <button class="btn-primary" id="scoreBtn">Score answer</button>
-        <button class="btn-secondary" id="nextBtn">Next question</button>
-        <button class="btn-secondary" id="resetBtn">Reset</button>
-      </div>
-      <div id="voiceHint" class="small muted" style="margin-top:10px"></div>
-    </section>
-
-    <section class="card" id="feedbackCard" style="display:none;">
-      <div class="scoreBox">
-        <div>
-          <div style="font-size:22px;font-weight:900;">Feedback</div>
-          <div class="small muted">Coach-style feedback for a young candidate starting out.</div>
-        </div>
-        <div style="text-align:right;">
-          <div class="bigScore" id="scoreOut"></div>
-          <div class="tone" id="scoreTone"></div>
-        </div>
-      </div>
-
-      <div class="tabs">
-        <div class="tab active" data-tab="summary">Summary</div>
-        <div class="tab" data-tab="scores">Scores</div>
-        <div class="tab" data-tab="improve">Improve</div>
-      </div>
-
-      <div class="tabpanel active" id="tab-summary">
-        <div class="small muted" style="margin-bottom:10px;">Attempt <span id="attemptLabel">1</span></div>
-        <div class="grid2">
-          <div class="panel">
-            <h3>What went well</h3>
-            <ul id="strengthsList"></ul>
-          </div>
-          <div class="panel">
-            <h3>What to improve</h3>
-            <ul id="improvementsList"></ul>
-          </div>
-        </div>
-        <div class="coach">
-          <strong>Coach says</strong>
-          <div id="coachingText" class="small"></div>
-        </div>
-      </div>
-
-      <div class="tabpanel" id="tab-scores">
-        <div id="breakdownWrap"></div>
-      </div>
-
-      <div class="tabpanel" id="tab-improve">
-        <div class="panel">
-          <h3>How to improve this answer</h3>
-          <div class="small" style="line-height:1.7">
-            <div><strong>1.</strong> Start with your main point clearly.</div>
-            <div><strong>2.</strong> Add one simple example.</div>
-            <div><strong>3.</strong> Finish with what this shows about you.</div>
-          </div>
-        </div>
-
-        <div class="sample" style="margin-top:10px;background:#0f172a;color:#fff;">
-          <strong>Here’s how you could say it better:</strong>
-          <div id="sampleAnswer" class="small" style="line-height:1.6;color:#e2e8f0"></div>
-        </div>
-
-        <div class="greenbox" style="margin-top:10px">
-          <div style="font-weight:800;color:#166534;margin-bottom:6px">Try again</div>
-          <div class="small" style="color:#166534;margin-bottom:10px">Now rewrite your answer using the coaching and sample above.</div>
-          <button class="btn-primary" id="rewriteBtn">Rewrite my answer</button>
-        </div>
-      </div>
-    </section>
-
-    <section class="card">
-      <div style="font-size:20px;font-weight:900;margin-bottom:10px;">Practice history</div>
-      <div id="historyWrap" class="small muted">No answers scored yet.</div>
-    </section>
-
-    <section class="card">
-      <div style="font-size:20px;font-weight:900;margin-bottom:10px;">Interview reminders</div>
-      <div class="reminderItem">Pause for 2 seconds before answering. It makes you sound thoughtful.</div>
-      <div class="reminderItem">Use one real example whenever you can.</div>
-      <div class="reminderItem">Sell attitude, willingness to learn, and reliability.</div>
-      <div class="reminderItem">Finish by showing the value you would bring.</div>
-    </section>
-
-    <div class="foot">Best in Chrome on Android for voice mode. Open the file in your phone browser and use Add to Home Screen.</div>
-  </div>
+<div class="container" id="app"></div>
 
 <script>
-const QUESTION_BANK = {
-  general: [
-    { question: "Tell me about yourself.", tips: "Aim for a 60–90 second answer: who you are, your relevant experience, your strengths, and why you are interested in this role." },
-    { question: "Why do you want this job?", tips: "Show that you understand the role, connect it to your skills, and explain why the company appeals to you." },
-    { question: "What are your strengths?", tips: "Choose 2–3 strengths relevant to the job and support them with a brief example." },
-    { question: "What is one area you are working on improving?", tips: "Be honest, but show self-awareness and explain what you are doing to improve." },
-    { question: "Why should we hire you?", tips: "Summarize your value clearly: skills, attitude, reliability, and fit for the team." }
-  ],
-  competency: [
-    { question: "Tell me about a time you handled a difficult situation.", tips: "Use STAR: Situation, Task, Action, Result. Keep it structured and specific." },
-    { question: "Describe a time you worked as part of a team.", tips: "Focus on your contribution, communication, and the outcome." },
-    { question: "Give an example of when you showed initiative.", tips: "Choose a real example where you stepped up without being asked." },
-    { question: "Tell me about a mistake you made and what you learned.", tips: "Show accountability, learning, and growth." },
-    { question: "Describe a time you had to deal with pressure or deadlines.", tips: "Show calmness, prioritisation, and follow-through." }
-  ],
-  firstJob: [
-    { question: "You may not have much experience yet, so what would you bring to this role?", tips: "Highlight attitude, willingness to learn, reliability, communication, and work ethic." },
-    { question: "How have college, school, sport, or volunteering prepared you for work?", tips: "Translate life experience into employability skills." },
-    { question: "How would your friends, lecturers, or previous supervisors describe you?", tips: "Use 3 strengths and back them up with a quick example." },
-    { question: "How would you handle a customer who is upset?", tips: "Show listening, empathy, calmness, and problem-solving." },
-    { question: "Do you have any questions for us?", tips: "Always ask 2–3 thoughtful questions that show interest." }
-  ]
-};
 
-let track = "firstJob";
-let index = 0;
-let history = [];
-let attempt = 1;
-let prepMode = "typed";
-let previousAnswer = "";
-let finalTranscript = "";
-let isRecording = false;
-let recognition = null;
+const workouts = [
+  { day: "Day 1", exercises: ["Squat", "Push Ups", "Rows", "Shoulder Press"] },
+  { day: "Day 2", exercises: ["Deadlift", "Chest Press", "Lat Pulldown", "Lateral Raises"] },
+  { day: "Day 3", exercises: ["Lunges", "Incline Press", "Rows", "Arnold Press"] },
+  { day: "Day 4", exercises: ["Squat", "Push Ups", "Rows", "Shoulder Press"] }
+];
 
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const app = document.getElementById("app");
 
-const els = {
-  trackSelect: document.getElementById("trackSelect"),
-  trackPill: document.getElementById("trackPill"),
-  questionCounter: document.getElementById("questionCounter"),
-  questionText: document.getElementById("questionText"),
-  tipText: document.getElementById("tipText"),
-  answerInput: document.getElementById("answerInput"),
-  answerLabel: document.getElementById("answerLabel"),
-  feedbackCard: document.getElementById("feedbackCard"),
-  scoreOut: document.getElementById("scoreOut"),
-  scoreTone: document.getElementById("scoreTone"),
-  strengthsList: document.getElementById("strengthsList"),
-  improvementsList: document.getElementById("improvementsList"),
-  coachingText: document.getElementById("coachingText"),
-  breakdownWrap: document.getElementById("breakdownWrap"),
-  historyWrap: document.getElementById("historyWrap"),
-  completedCount: document.getElementById("completedCount"),
-  avgScore: document.getElementById("avgScore"),
-  attemptStat: document.getElementById("attemptStat"),
-  attemptLabel: document.getElementById("attemptLabel"),
-  voiceBtn: document.getElementById("voiceBtn"),
-  voiceHint: document.getElementById("voiceHint"),
-  voiceSupported: document.getElementById("voiceSupported"),
-  scoreBtn: document.getElementById("scoreBtn"),
-  nextBtn: document.getElementById("nextBtn"),
-  resetBtn: document.getElementById("resetBtn"),
-  rewriteBtn: document.getElementById("rewriteBtn"),
-  sampleAnswer: document.getElementById("sampleAnswer"),
-  typedBtn: document.getElementById("typedBtn"),
-  spokenBtn: document.getElementById("spokenBtn")
-};
+workouts.forEach(day => {
+  const div = document.createElement("div");
+  div.className = "day";
+  div.innerHTML = `<h3>${day.day}</h3>`;
 
-function getQuestions(){ return QUESTION_BANK[track]; }
-function currentQuestion(){ return getQuestions()[index]; }
+  day.exercises.forEach(ex => {
+    const exDiv = document.createElement("div");
+    exDiv.className = "exercise";
+    exDiv.innerHTML = `<strong>${ex}</strong>`;
+    div.appendChild(exDiv);
+  });
 
-function getSampleAnswer(question) {
-  if (question.includes("Tell me about yourself")) {
-    return "I’m currently finishing my studies and I’m really interested in starting my career in a role like this. I’m reliable, I learn quickly, and I enjoy working with people. For example, during college I balanced multiple assignments and always met my deadlines, which shows I’m organised and committed.";
-  }
-  if (question.includes("Why do you want this job")) {
-    return "I’m interested in this role because it gives me the opportunity to learn and build experience. I like working with people and being part of a team. I’m looking for somewhere I can develop my skills and contribute, and this role feels like a great place to start.";
-  }
-  if (question.includes("strengths")) {
-    return "One of my strengths is reliability. For example, in college I always made sure my work was completed on time and to a good standard. I take responsibility seriously, and I would bring that same approach into this role.";
-  }
-  if (question.includes("Why should we hire you")) {
-    return "I may not have a lot of experience yet, but I’m very motivated and willing to learn. I’m reliable, I work well with others, and I take feedback on board. For example, in college I improved my work based on feedback and consistently delivered on time. I’d bring that same attitude here.";
-  }
-  return "A strong answer would include a clear point, one example, and what it shows about you. Keep it simple, honest, and positive.";
-}
-
-function evaluateAnswer(answer) {
-  const text = answer.trim();
-  if (!text) {
-    return {
-      score: 1,
-      strengths: ["No answer entered yet."],
-      improvements: ["Start by giving any answer — it doesn’t need to be perfect.", "Try using the simple structure shown below."],
-      coaching: "Don’t overthink it. Just speak naturally and build from there.",
-      breakdown: { structure: 1, example: 1, clarity: 1 }
-    };
-  }
-  const lower = text.toLowerCase();
-  let score = 5;
-  const strengths = [];
-  const improvements = [];
-
-  if (text.split(/\s+/).length > 40) {
-    score += 2;
-    strengths.push("You gave a complete answer. It didn’t feel too short.");
-  } else {
-    score -= 2;
-    improvements.push("Your answer is still a bit short. Expand it slightly.");
-  }
-  if (/(for example|when i|i worked|i helped|i learned|i had to)/.test(lower)) {
-    score += 2;
-    strengths.push("You used an example, which makes your answer more believable.");
-  } else {
-    score -= 1;
-    improvements.push("Add one simple real-life example.");
-  }
-  if (/(because|so that|result|therefore)/.test(lower)) {
-    score += 1;
-    strengths.push("Your answer had some structure and flow.");
-  } else {
-    improvements.push("Structure it like this: point → example → result.");
-  }
-  if (/(team|customer|learn|reliable|work|support|responsible)/.test(lower)) {
-    score += 1;
-    strengths.push("You used good work-related language.");
-  } else {
-    improvements.push("Use words like teamwork, reliability, learning, customer, or responsibility.");
-  }
-
-  score = Math.max(1, Math.min(10, score));
-
-  const coaching =
-    score <= 4
-      ? "Alright — we’re just getting started. Right now it’s a bit thin, which is totally normal. Let’s build it up: say your point clearly, add one simple example, and finish with what it shows about you."
-      : score <= 7
-      ? "This is a good start — you’ve got something to work with. Now let’s strengthen it by adding a clearer example and finishing with a stronger message about what you bring."
-      : "This is strong — you’re nearly there. Now it’s about tightening it slightly and saying it with confidence so it feels natural.";
-
-  return {
-    score, strengths, improvements, coaching,
-    breakdown: {
-      structure: /(because|so that|result)/.test(lower) ? 8 : 4,
-      example: /(for example|when i|i had to)/.test(lower) ? 9 : 3,
-      clarity: text.length > 80 ? 8 : 5
-    }
-  };
-}
-
-function scoreTone(score){
-  if(score <= 3) return "Needs Work";
-  if(score <= 6) return "Developing";
-  if(score <= 8) return "Strong";
-  return "Excellent";
-}
-function trackLabel(value){
-  if(value === "general") return "General";
-  if(value === "competency") return "Competency";
-  return "Early Career";
-}
-function escapeHtml(str){
-  return String(str).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
-}
-
-function renderQuestion(){
-  const q = currentQuestion();
-  els.trackPill.textContent = trackLabel(track);
-  els.questionCounter.textContent = `Question ${index + 1} of ${getQuestions().length}`;
-  els.questionText.textContent = q.question;
-  els.tipText.textContent = q.tips;
-  els.answerLabel.textContent = prepMode === "typed" ? "Type the answer" : "Say it out loud first, or use voice mode below";
-}
-function renderStats(){
-  els.completedCount.textContent = history.length;
-  els.avgScore.textContent = history.length ? Math.round(history.reduce((s,h)=>s+h.score,0)/history.length) : "-";
-  els.attemptStat.textContent = attempt;
-  els.attemptLabel.textContent = attempt;
-}
-function renderHistory(){
-  if(!history.length){
-    els.historyWrap.className = "small muted";
-    els.historyWrap.textContent = "No answers scored yet.";
-    return;
-  }
-  els.historyWrap.className = "";
-  els.historyWrap.innerHTML = history.slice().reverse().map(item => `
-    <div class="historyItem">
-      <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
-        <div style="font-weight:700;line-height:1.4;padding-right:8px;">${escapeHtml(item.question)}</div>
-        <div class="badge">${item.score}/10</div>
-      </div>
-    </div>
-  `).join("");
-}
-function setActiveTab(name){
-  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === name));
-  document.querySelectorAll(".tabpanel").forEach(p => p.classList.toggle("active", p.id === "tab-" + name));
-}
-function renderFeedback(result){
-  els.feedbackCard.style.display = "block";
-  els.scoreOut.textContent = `${result.score}/10`;
-  els.scoreTone.textContent = scoreTone(result.score);
-  els.strengthsList.innerHTML = result.strengths.map(x => `<li>${escapeHtml(x)}</li>`).join("");
-  els.improvementsList.innerHTML = result.improvements.map(x => `<li>${escapeHtml(x)}</li>`).join("");
-  els.coachingText.textContent = result.coaching;
-  els.breakdownWrap.innerHTML = Object.entries(result.breakdown).map(([k,v]) => `
-    <div style="margin-bottom:12px">
-      <div class="meterLabel"><span style="text-transform:capitalize">${escapeHtml(k)}</span><span>${v}/10</span></div>
-      <div class="meter"><span style="width:${v*10}%"></span></div>
-    </div>
-  `).join("");
-  els.sampleAnswer.textContent = getSampleAnswer(currentQuestion().question);
-  setActiveTab("summary");
-  window.scrollTo({top: els.feedbackCard.offsetTop - 12, behavior:"smooth"});
-}
-function clearFeedback(){ els.feedbackCard.style.display = "none"; }
-
-function setPrepMode(mode){
-  prepMode = mode;
-  els.typedBtn.classList.toggle("active", mode === "typed");
-  els.spokenBtn.classList.toggle("active", mode === "spoken");
-  renderQuestion();
-}
-function setVoiceHint(text, cls="muted"){
-  els.voiceHint.className = `small ${cls}`;
-  els.voiceHint.textContent = text;
-}
-function updateVoiceButton(){
-  els.voiceBtn.textContent = isRecording ? "Stop voice mode" : "Start voice mode";
-  els.voiceBtn.classList.toggle("recording", isRecording);
-}
-function setupVoice(){
-  if(!SpeechRecognition){
-    els.voiceSupported.textContent = "Voice not supported in this browser.";
-    els.voiceSupported.className = "small danger";
-    els.voiceBtn.disabled = true;
-    setVoiceHint("You can still use the full app by typing.", "muted");
-    return;
-  }
-  els.voiceSupported.textContent = "Voice available";
-  els.voiceSupported.className = "small ok";
-  recognition = new SpeechRecognition();
-  recognition.lang = "en-IE";
-  recognition.interimResults = true;
-  recognition.continuous = true;
-
-  recognition.onstart = () => {
-    isRecording = true;
-    updateVoiceButton();
-    setVoiceHint("Listening… speak naturally, then tap again to stop.", "ok");
-  };
-  recognition.onresult = (event) => {
-    let interim = "";
-    for(let i = event.resultIndex; i < event.results.length; i++){
-      const chunk = event.results[i][0].transcript;
-      if(event.results[i].isFinal) finalTranscript += chunk + " ";
-      else interim += chunk;
-    }
-    els.answerInput.value = (finalTranscript + interim).trim();
-  };
-  recognition.onerror = (event) => {
-    isRecording = false;
-    updateVoiceButton();
-    const code = event && event.error ? event.error : "unknown";
-    if(code === "not-allowed") setVoiceHint("Microphone permission was blocked. Allow microphone access and try again.", "danger");
-    else setVoiceHint("Voice mode stopped. You can try again or type instead.", "danger");
-  };
-  recognition.onend = () => {
-    isRecording = false;
-    updateVoiceButton();
-    if(els.answerInput.value.trim()) setVoiceHint("Voice capture finished. Review the text, then tap Score answer.", "ok");
-    else setVoiceHint("Voice mode stopped. You can try again or type instead.", "muted");
-  };
-  setVoiceHint("Tap Start voice mode and allow microphone access when prompted.", "muted");
-}
-function startVoice(){
-  if(!recognition) return;
-  finalTranscript = els.answerInput.value ? els.answerInput.value.trim() + " " : "";
-  try{ recognition.start(); } catch(e){ setVoiceHint("Voice mode is already running.", "muted"); }
-}
-function stopVoice(){
-  if(recognition && isRecording){ try{ recognition.stop(); } catch(e){} }
-}
-
-function scoreAnswer(){
-  const answer = els.answerInput.value;
-  previousAnswer = answer;
-  const result = evaluateAnswer(answer);
-  history.push({ question: currentQuestion().question, score: result.score, answer });
-  renderStats();
-  renderHistory();
-  renderFeedback(result);
-}
-function nextQuestion(){
-  stopVoice();
-  index = (index + 1) % getQuestions().length;
-  attempt = 1;
-  previousAnswer = "";
-  els.answerInput.value = "";
-  finalTranscript = "";
-  clearFeedback();
-  renderQuestion();
-  renderStats();
-}
-function resetAll(){
-  stopVoice();
-  track = "firstJob";
-  index = 0;
-  history = [];
-  attempt = 1;
-  previousAnswer = "";
-  els.trackSelect.value = "firstJob";
-  els.answerInput.value = "";
-  finalTranscript = "";
-  clearFeedback();
-  setPrepMode("typed");
-  renderQuestion();
-  renderStats();
-  renderHistory();
-}
-function rewriteAnswer(){
-  clearFeedback();
-  els.answerInput.value = previousAnswer;
-  attempt += 1;
-  renderStats();
-  window.scrollTo({top: 0, behavior:"smooth"});
-  els.answerInput.focus();
-}
-
-els.trackSelect.addEventListener("change", e => {
-  track = e.target.value; index = 0; attempt = 1; previousAnswer = ""; els.answerInput.value = ""; finalTranscript = "";
-  clearFeedback(); renderQuestion(); renderStats();
+  app.appendChild(div);
 });
-els.typedBtn.addEventListener("click", ()=>setPrepMode("typed"));
-els.spokenBtn.addEventListener("click", ()=>setPrepMode("spoken"));
-els.scoreBtn.addEventListener("click", scoreAnswer);
-els.nextBtn.addEventListener("click", nextQuestion);
-els.resetBtn.addEventListener("click", resetAll);
-els.rewriteBtn.addEventListener("click", rewriteAnswer);
-els.voiceBtn.addEventListener("click", ()=>{ if(isRecording) stopVoice(); else startVoice(); });
-document.querySelectorAll(".tab").forEach(tab => tab.addEventListener("click", ()=>setActiveTab(tab.dataset.tab)));
 
-renderQuestion();
-renderStats();
-renderHistory();
-setPrepMode("typed");
-setupVoice();
-updateVoiceButton();
 </script>
+
 </body>
 </html>
